@@ -319,7 +319,7 @@ const Home = (props: HomeProps) => {
               isMinting ? (
                 <CircularProgress />
               ) : (
-                "MINT"
+                "MINT A SCOOP"
               )
             ) : (
               <Countdown
@@ -329,7 +329,11 @@ const Home = (props: HomeProps) => {
             )}
           </MintButton>
         )}
+
+
       </MintContainer>
+
+      {(wallet && !isSoldOut) && <p>Scoops cost <b>◎0.44</b> each</p>}
 
       <Snackbar
         open={alertState.open}
