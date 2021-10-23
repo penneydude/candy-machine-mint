@@ -3,13 +3,16 @@ import styled from "styled-components";
 import Countdown from "react-countdown";
 import { Button, CircularProgress, Snackbar } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
+import { isPast } from 'date-fns'
 
 import * as anchor from "@project-serum/anchor";
 
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 import { useAnchorWallet } from "@solana/wallet-adapter-react";
-import { WalletDialogButton } from "@solana/wallet-adapter-material-ui";
+import { WalletDialogButton, WalletDisconnectButton } from "@solana/wallet-adapter-material-ui";
+
+import { ScoopLogoSVG } from './svg/ScoopLogo';
 
 import {
   CandyMachine,
@@ -19,14 +22,6 @@ import {
   shortenAddress,
 } from "./candy-machine";
 
-const ConnectButton = styled(WalletDialogButton)``;
-
-const CounterText = styled.span``; // add your styles here
-
-const MintContainer = styled.div``; // add your styles here
-
-const MintButton = styled(Button)``; // add your styles here
-
 export interface HomeProps {
   candyMachineId: anchor.web3.PublicKey;
   config: anchor.web3.PublicKey;
@@ -35,6 +30,124 @@ export interface HomeProps {
   treasury: anchor.web3.PublicKey;
   txTimeout: number;
 }
+
+const freezerOpenDate = new Date(process.env.REACT_APP_FREEZER_OPEN_DATE!);
+
+const MainContainer = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: transparent;
+
+  & img.first-freezer {
+    height: 200px;
+    margin-bottom: 48px;
+  }
+`;
+
+const Header = styled.div`
+  display: flex;
+  flex-flow: row-nowrap;
+  justify-content: space-between;
+  position: absolute;
+  top: 0;
+  width: 100%;
+
+  & p {
+    margin: 24px;
+  }
+
+  & img.wordmark {
+    height: 48px;
+    margin-bottom: 6px;
+    margin-left: 4px;
+    opacity: 0.5;
+  }
+
+  & .scoopLogo {
+    width: 64px;
+    height: 64px;
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+    & .eyes {
+      fill: #fff;
+    }
+
+    & .cone {
+      fill: rgba(255, 255, 255, 0);
+      stroke: #fff;
+      stroke-width: 8px;
+      transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+
+    & .bg {
+      fill: none;
+    }
+
+    &:hover {
+      & .cone {
+        fill: #768BF9;
+      }
+    }
+  }
+`;
+
+const ConnectButton = styled(WalletDialogButton)`
+  & .MuiIconButton-root {
+    color: #fff;
+  }
+
+  & .MuiButton-label {
+    font-size: 18px;
+    font-weight: 700;
+  }
+`;
+
+const CounterText = styled.span``;
+
+const MintContainer = styled.div`
+  background-color: transparent;
+`;
+
+const CountContainer = styled.div`
+  background-color: rgba(255, 255, 255, 0.15);
+  font-size: 18px;
+  font-weight: 700;
+  padding: 12px 48px;
+  margin: 8px 0 24px 0;
+  border: 1px solid #fff;
+  border-radius: 8px;
+`;
+
+const MintButton = styled(Button)`
+  color: #fff !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  padding: 16px 48px !important;
+  border-color: #768BF9;
+  border-radius: 100px !important;
+  box-shadow: inset 0 0 20px 40px #768BF9;
+  background: linear-gradient(-30deg, #768BF9, #00DBDE, #FC00FF, #768BF9, #00DBDE, #FC00FF, #768BF9);
+  background-size: 680% 680%;
+  animation: gradient 2s linear infinite;
+  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+  ${props => props.disabled && `
+    background: #000;
+  `}
+
+  &:hover {
+    color: #fff;
+    box-shadow: inset 0 0 20px 0 transparent;
+  }
+
+  @keyframes gradient {
+    0% { background-position: 60% 60% }
+    100% { background-position: 0% 0% }
+  }
+`;
 
 const Home = (props: HomeProps) => {
   const [balance, setBalance] = useState<number>();
@@ -166,31 +279,43 @@ const Home = (props: HomeProps) => {
   ]);
 
   return (
-    <main>
-      {wallet && (
-        <p>Wallet {shortenAddress(wallet.publicKey.toBase58() || "")}</p>
+    <MainContainer>
+      <Header>
+        <p>
+          <a href='/'><ScoopLogoSVG /></a>
+          <img className="wordmark" src={`${process.env.PUBLIC_URL}/img/ScoopShopLogo.svg`} />
+        </p>
+        {wallet && (
+          <p><WalletDisconnectButton>{shortenAddress(wallet.publicKey.toBase58() || "")}</WalletDisconnectButton></p>
+        )}
+      </Header>
+
+      <img className="first-freezer" src={`${process.env.PUBLIC_URL}/img/FirstFreezer.svg`} />
+
+      {isPast(freezerOpenDate) ? (
+        <>
+          {wallet && <span>Scoops in the freezer</span>}
+          {wallet && <CountContainer>{itemsRemaining} / {itemsAvailable}</CountContainer>}
+        </>
+      ) : (
+        <>
+          {wallet && <p>Freezer opens in</p>}
+        </>
       )}
 
-      {wallet && <p>Balance: {(balance || 0).toLocaleString()} SOL</p>}
-
-      {wallet && <p>Total Available: {itemsAvailable}</p>}
-
-      {wallet && <p>Redeemed: {itemsRedeemed}</p>}
-
-      {wallet && <p>Remaining: {itemsRemaining}</p>}
 
       <MintContainer>
         {!wallet ? (
           <ConnectButton>Connect Wallet</ConnectButton>
         ) : (
           <MintButton
-            disabled={isSoldOut || isMinting || !isActive}
+            disabled={isSoldOut || isMinting || !isPast(freezerOpenDate)}
             onClick={onMint}
             variant="contained"
           >
             {isSoldOut ? (
               "SOLD OUT"
-            ) : isActive ? (
+            ) : isPast(freezerOpenDate) ? (
               isMinting ? (
                 <CircularProgress />
               ) : (
@@ -198,9 +323,7 @@ const Home = (props: HomeProps) => {
               )
             ) : (
               <Countdown
-                date={startDate}
-                onMount={({ completed }) => completed && setIsActive(true)}
-                onComplete={() => setIsActive(true)}
+                date={freezerOpenDate}
                 renderer={renderCounter}
               />
             )}
@@ -220,7 +343,7 @@ const Home = (props: HomeProps) => {
           {alertState.message}
         </Alert>
       </Snackbar>
-    </main>
+    </MainContainer>
   );
 };
 

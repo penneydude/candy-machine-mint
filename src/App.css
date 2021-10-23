@@ -1,3 +1,48 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap');
+
+@media (max-width: 600px) {
+  html {
+    font-size: 10px;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 959px) {
+  html {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 960px) and (max-width 1279px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 1280px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html, body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.MuiList-root {
+  background: #fff !important;
+}
+
+.MuiIconButton-root {
+  color: #fff !important;
+}
+
+::-moz-selection{
+  background: #768bf9;
+}
+::selection{
+  background: #768bf9;
 }
