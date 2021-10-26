@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Countdown from "react-countdown";
 import { Button, CircularProgress, Snackbar } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
-import { isPast } from 'date-fns'
+// import { isPast } from 'date-fns'
 
 import * as anchor from "@project-serum/anchor";
 
@@ -292,7 +292,7 @@ const Home = (props: HomeProps) => {
 
       <img className="first-freezer" src={`${process.env.PUBLIC_URL}/img/FirstFreezer.svg`} />
 
-      {isPast(freezerOpenDate) ? (
+      {/* {isPast(freezerOpenDate) ? (
         <>
           {wallet && <span>Scoops in the freezer</span>}
           {wallet && <CountContainer>{itemsRemaining} / {itemsAvailable}</CountContainer>}
@@ -301,19 +301,22 @@ const Home = (props: HomeProps) => {
         <>
           {wallet && <p>Freezer opens in</p>}
         </>
-      )}
+      )} */}
 
 
       <MintContainer>
-        {!wallet ? (
+        {/* {!wallet ? (
           <ConnectButton>Connect Wallet</ConnectButton>
-        ) : (
+        ) : ( */}
+
           <MintButton
-            disabled={isSoldOut || isMinting || !isPast(freezerOpenDate)}
-            onClick={onMint}
+            disabled
+            // disabled={isSoldOut || isMinting || !isPast(freezerOpenDate)}
+            // onClick={onMint}
             variant="contained"
           >
-            {isSoldOut ? (
+            SOLD OUT
+            {/* {isSoldOut ? (
               "SOLD OUT"
             ) : isPast(freezerOpenDate) ? (
               isMinting ? (
@@ -326,14 +329,14 @@ const Home = (props: HomeProps) => {
                 date={freezerOpenDate}
                 renderer={renderCounter}
               />
-            )}
+            )} */}
           </MintButton>
-        )}
+        {/* )} */}
 
 
       </MintContainer>
 
-      {(wallet && !isSoldOut) && <p>Scoops cost <b>◎0.44</b> each</p>}
+      {/* {(wallet && !isSoldOut) && <p>Scoops cost <b>◎0.44</b> each</p>} */}
 
       <Snackbar
         open={alertState.open}
