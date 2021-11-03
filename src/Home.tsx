@@ -31,7 +31,7 @@ export interface HomeProps {
   txTimeout: number;
 }
 
-const freezerOpenDate = parseJSON('2021-11-06T05:00:00Z');
+const freezerOpenDate = parseJSON('2021-11-05T14:00:00Z');
 
 const MainContainer = styled.div`
   display: flex;
