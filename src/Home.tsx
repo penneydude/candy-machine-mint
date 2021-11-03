@@ -31,7 +31,7 @@ export interface HomeProps {
   txTimeout: number;
 }
 
-const freezerOpenDate = parseJSON('2021-11-05T14:00:00Z');
+const freezerOpenDate = parseJSON(process.env.REACT_APP_FREEZER_OPEN_DATE!);
 
 const MainContainer = styled.div`
   display: flex;
