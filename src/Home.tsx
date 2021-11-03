@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Countdown from "react-countdown";
 import { Button, CircularProgress, Snackbar } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
-// import { isPast } from 'date-fns'
+import { parseJSON, isPast } from 'date-fns'
 
 import * as anchor from "@project-serum/anchor";
 
@@ -31,7 +31,7 @@ export interface HomeProps {
   txTimeout: number;
 }
 
-const freezerOpenDate = new Date(process.env.REACT_APP_FREEZER_OPEN_DATE!);
+const freezerOpenDate = parseJSON('2021-11-06T05:00:00Z');
 
 const MainContainer = styled.div`
   display: flex;
@@ -151,7 +151,7 @@ const MintButton = styled(Button)`
 
 const Home = (props: HomeProps) => {
   const [balance, setBalance] = useState<number>();
-  const [isActive, setIsActive] = useState(false); // true when countdown completes
+  const [isActive, setIsActive] = useState(isPast(freezerOpenDate)); // true when countdown completes
   const [isSoldOut, setIsSoldOut] = useState(false); // true when items remaining is zero
   const [isMinting, setIsMinting] = useState(false); // true when user got to press MINT
 
@@ -278,6 +278,14 @@ const Home = (props: HomeProps) => {
     props.connection,
   ]);
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setIsActive(isPast(freezerOpenDate));
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <MainContainer>
       <Header>
@@ -290,35 +298,32 @@ const Home = (props: HomeProps) => {
         )}
       </Header>
 
-      <img className="first-freezer" src={`${process.env.PUBLIC_URL}/img/FirstFreezer.svg`} />
+      <img className="first-freezer" src={`${process.env.PUBLIC_URL}/img/SecondFreezer.svg`} />
 
-      {/* {isPast(freezerOpenDate) ? (
+      {isActive && !isSoldOut ? (
         <>
           {wallet && <span>Scoops in the freezer</span>}
           {wallet && <CountContainer>{itemsRemaining} / {itemsAvailable}</CountContainer>}
         </>
       ) : (
         <>
-          {wallet && <p>Freezer opens in</p>}
+          {wallet && !isSoldOut && <p>Freezer opens in</p>}
         </>
-      )} */}
+      )}
 
 
       <MintContainer>
-        {/* {!wallet ? (
+        {!wallet ? (
           <ConnectButton>Connect Wallet</ConnectButton>
-        ) : ( */}
-
+        ) : (
           <MintButton
-            disabled
-            // disabled={isSoldOut || isMinting || !isPast(freezerOpenDate)}
-            // onClick={onMint}
+            disabled={isSoldOut || isMinting || !isActive}
+            onClick={onMint}
             variant="contained"
           >
-            SOLD OUT
-            {/* {isSoldOut ? (
+            {isSoldOut ? (
               "SOLD OUT"
-            ) : isPast(freezerOpenDate) ? (
+            ) : isActive ? (
               isMinting ? (
                 <CircularProgress />
               ) : (
@@ -329,14 +334,14 @@ const Home = (props: HomeProps) => {
                 date={freezerOpenDate}
                 renderer={renderCounter}
               />
-            )} */}
+            )}
           </MintButton>
-        {/* )} */}
+        )}
 
 
       </MintContainer>
 
-      {/* {(wallet && !isSoldOut) && <p>Scoops cost <b>◎0.44</b> each</p>} */}
+      {(wallet && !isSoldOut) && <p>Scoops cost <b>◎0.48</b> each</p>}
 
       <Snackbar
         open={alertState.open}

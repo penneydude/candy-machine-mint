@@ -1,6 +1,9 @@
 import "./App.css";
 import { useMemo } from "react";
 
+// Polyfill for older browsers
+import "core-js/stable";
+
 import Home from "./Home";
 
 import * as anchor from "@project-serum/anchor";
@@ -45,11 +48,11 @@ const theme = createTheme({
     palette: {
       type: 'light',
       primary: {
-          main: '#768bf9',
-          contrastText: '#ffffff',
+          main: '#ffd166',
+          contrastText: '#382700',
       },
       secondary: {
-          main: '#ffba08',
+          main: '#768bf9',
           contrastText: '#ffffff',
       },
     },
