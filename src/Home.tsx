@@ -300,7 +300,7 @@ const Home = (props: HomeProps) => {
 
       <img className="first-freezer" src={`${process.env.PUBLIC_URL}/img/SecondFreezer.svg`} />
 
-      {isActive && !isSoldOut ? (
+      {/* {isActive && !isSoldOut ? (
         <>
           {wallet && <span>Scoops in the freezer</span>}
           {wallet && <CountContainer>{itemsRemaining} / {itemsAvailable}</CountContainer>}
@@ -309,10 +309,10 @@ const Home = (props: HomeProps) => {
         <>
           {wallet && !isSoldOut && <p>Freezer opens in</p>}
         </>
-      )}
+      )} */}
 
 
-      <MintContainer>
+      {/* <MintContainer>
         {!wallet ? (
           <ConnectButton>Connect Wallet</ConnectButton>
         ) : (
@@ -337,11 +337,19 @@ const Home = (props: HomeProps) => {
             )}
           </MintButton>
         )}
+      </MintContainer> */}
 
-
+      <MintContainer>
+        <MintButton
+          disabled
+          onClick={() => {}}
+          variant="contained"
+        >
+          CLOSED
+        </MintButton>
       </MintContainer>
 
-      {(wallet && !isSoldOut) && <p>Scoops cost <b>◎0.48</b> each</p>}
+      {/* {(wallet && !isSoldOut) && <p>Scoops cost <b>◎0.48</b> each</p>} */}
 
       <Snackbar
         open={alertState.open}
